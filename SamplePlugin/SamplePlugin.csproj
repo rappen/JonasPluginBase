@@ -72,6 +72,7 @@
     <Compile Include="AccountExtensions.cs" />
     <Compile Include="AwesomePlugin.cs" />
     <Compile Include="ClassicPlugin.cs" />
+    <Compile Include="ContactExtensions.cs" />
     <Compile Include="MyFirstPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

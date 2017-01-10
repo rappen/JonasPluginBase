@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using JonasPluginBase;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
@@ -13,41 +8,28 @@ namespace SamplePlugin
     {
         public override void Execute(JonasPluginBag bag)
         {
-            if (bag.Context.PrimaryEntityName != "contact" || !bag.Context.InputParameters.Contains("Target"))
+            if (!bag.Context.ContactTriggered())
             {
                 bag.Trace("Context not satisfying");
                 return;
             }
-            var accountid = GetAccountIdFromContact(bag.TargetEntity);
+            var accountid = bag.TargetEntity.GetAccountIdFromContact();
             bag.Trace("Accountid from target: {0}", accountid);
             if (accountid.Equals(Guid.Empty))
             {
-                accountid = GetAccountIdFromContact(bag.PostImage);
+                accountid = bag.PostImage.GetAccountIdFromContact();
                 bag.Trace("Accountid from postimage: {0}", accountid);
             }
             if (!accountid.Equals(Guid.Empty))
             {
                 bag.AccountUpdateStats(accountid);
             }
-            var preaccountid = GetAccountIdFromContact(bag.PreImage);
+            var preaccountid = bag.PreImage.GetAccountIdFromContact();
             bag.Trace("Accountid from preimage: {0}", preaccountid);
             if (!preaccountid.Equals(Guid.Empty) && !preaccountid.Equals(accountid))
             {
                 bag.AccountUpdateStats(preaccountid);
             }
-        }
-
-        private static Guid GetAccountIdFromContact(Entity contact)
-        {
-            if (contact != null && contact.Contains("parentcustomerid"))
-            {
-                var parentref = (EntityReference)contact["parentcustomerid"];
-                if (parentref != null && parentref.LogicalName == "account")
-                {
-                    return parentref.Id;
-                }
-            }
-            return Guid.Empty;
         }
     }
 }
