@@ -11,17 +11,6 @@ namespace SamplePlugin
 {
     public class AwesomePlugin : JonasPluginBase.JonasPluginBase
     {
-        const string fetch = @"<fetch aggregate='true' >
-  <entity name='contact' >
-    <attribute name='familystatuscode' alias='Status' groupby='true' />
-    <attribute name='contactid' alias='Count' aggregate='count' />
-    <filter>
-      <condition attribute='parentcustomerid' operator='eq' value='{0}' />
-      <condition attribute='familystatuscode' operator='not-null' />
-    </filter>
-  </entity>
-</fetch>";
-
         public override void Execute(JonasPluginBag bag)
         {
             if (bag.Context.PrimaryEntityName != "contact" || !bag.Context.InputParameters.Contains("Target"))
@@ -38,32 +27,14 @@ namespace SamplePlugin
             }
             if (!accountid.Equals(Guid.Empty))
             {
-                UpdateAccountStats(bag, accountid);
+                bag.AccountUpdateStats(accountid);
             }
             var preaccountid = GetAccountIdFromContact(bag.PreImage);
             bag.Trace("Accountid from preimage: {0}", preaccountid);
             if (!preaccountid.Equals(Guid.Empty) && !preaccountid.Equals(accountid))
             {
-                UpdateAccountStats(bag, preaccountid);
+                bag.AccountUpdateStats(preaccountid);
             }
-        }
-
-        private static void UpdateAccountStats(JonasPluginBag bag, Guid accountid)
-        {
-            var fetchexpr = new FetchExpression(string.Format(fetch, accountid));
-            var results = bag.Service.RetrieveMultiple(fetchexpr);
-
-            var descr = new StringBuilder();
-            foreach (var familystatus in results.Entities)
-            {
-                var status = bag.Service.GetOptionsetLabel("contact", "familystatuscode", (int)familystatus.AttributeToBaseType("Status"));
-                var count = familystatus.AttributeToBaseType("Count");
-                descr.AppendLine($"{count} {status}");
-            }
-            bag.Trace("Description:\n{0}", descr);
-            var account = new Entity("account", accountid);
-            account["description"] = descr.ToString();
-            bag.Service.Update(account);
         }
 
         private static Guid GetAccountIdFromContact(Entity contact)
