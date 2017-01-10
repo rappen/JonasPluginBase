@@ -85,25 +85,5 @@ namespace JonasPluginBase
             service.Update(entity);
             bag.Trace($"Updated in: {DateTime.Now - start}");
         }
-
-        public string GetOptionsetLabel(string entity, string attribute, int value)
-        {
-            bag.Trace($"Getting metadata for {entity}.{attribute}");
-            var req = new RetrieveAttributeRequest
-            {
-                EntityLogicalName = entity,
-                LogicalName = attribute,
-                RetrieveAsIfPublished = true
-            };
-            var resp = (RetrieveAttributeResponse)service.Execute(req);
-            var plmeta = (PicklistAttributeMetadata)resp.AttributeMetadata;
-            if (plmeta == null)
-            {
-                throw new InvalidPluginExecutionException($"{entity}.{attribute} does not appear to be an optionset");
-            }
-            var result = plmeta.OptionSet.Options.FirstOrDefault(o => o.Value == value)?.Label?.UserLocalizedLabel?.Label;
-            bag.Trace($"Returning label for value {value}: {result}");
-            return result;
-        }
     }
 }

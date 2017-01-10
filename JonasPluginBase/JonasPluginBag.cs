@@ -96,6 +96,26 @@ namespace JonasPluginBase
             trace.Trace(DateTime.Now.ToString("HH:mm:ss.fff") + "\t" + s);
         }
 
+        public string GetOptionsetLabel(string entity, string attribute, int value)
+        {
+            Trace($"Getting metadata for {entity}.{attribute}");
+            var req = new RetrieveAttributeRequest
+            {
+                EntityLogicalName = entity,
+                LogicalName = attribute,
+                RetrieveAsIfPublished = true
+            };
+            var resp = (RetrieveAttributeResponse)Service.Execute(req);
+            var plmeta = (PicklistAttributeMetadata)resp.AttributeMetadata;
+            if (plmeta == null)
+            {
+                throw new InvalidPluginExecutionException($"{entity}.{attribute} does not appear to be an optionset");
+            }
+            var result = plmeta.OptionSet.Options.FirstOrDefault(o => o.Value == value)?.Label?.UserLocalizedLabel?.Label;
+            Trace($"Returning label for value {value}: {result}");
+            return result;
+        }
+
         public void Dispose()
         {
             Trace("*** Exit");
