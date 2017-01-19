@@ -1,9 +1,6 @@
 ﻿using System;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
-using System.Linq;
 using System.Diagnostics;
 
 namespace JonasPluginBase

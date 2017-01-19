@@ -19,6 +19,7 @@ namespace JonasPluginBase
         #endregion Private properties
 
         #region Public properties
+
         public JonasServiceProxy Service { get; }
 
         public IPluginExecutionContext Context { get; }
@@ -68,15 +69,17 @@ namespace JonasPluginBase
                 return null;
             }
         }
+
         #endregion Public properties
 
         #region Public methods
+
         public JonasPluginBag(IServiceProvider serviceProvider)
         {
             provider = serviceProvider;
             trace = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             Context = (IPluginExecutionContext)provider.GetService(typeof(IPluginExecutionContext));
-            IOrganizationServiceFactory serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
+            var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(null);
             Service = new JonasServiceProxy(service, this);
             Init();
@@ -120,9 +123,11 @@ namespace JonasPluginBase
         {
             Trace("*** Exit");
         }
+
         #endregion Public methods
 
         #region Private/internal stuff
+
         private void Init()
         {
             Trace("*** Enter");
@@ -244,6 +249,7 @@ namespace JonasPluginBase
                     "Unable to retrieve metadata/primaryattribute for entity: " + entityName);
             }
         }
+        
         #endregion Private/Internal stuff
     }
 }
