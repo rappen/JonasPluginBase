@@ -1,6 +1,5 @@
 ﻿using System;
 using JonasPluginBase;
-using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
 {

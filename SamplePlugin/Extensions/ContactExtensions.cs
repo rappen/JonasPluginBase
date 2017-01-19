@@ -1,5 +1,4 @@
-﻿using JonasPluginBase;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using System;
 
 namespace SamplePlugin
