@@ -1,5 +1,6 @@
 ﻿using System;
 using JonasPluginBase;
+using SamplePlugin.Extensions;
 
 namespace SamplePlugin
 {

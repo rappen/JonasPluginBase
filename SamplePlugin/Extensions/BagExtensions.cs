@@ -4,9 +4,9 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Text;
 
-namespace SamplePlugin
+namespace SamplePlugin.Extensions
 {
-    internal static class AccountExtensions
+    internal static class BagExtensions
     {
         const string fetch = @"<fetch aggregate='true' >
   <entity name='contact' >
