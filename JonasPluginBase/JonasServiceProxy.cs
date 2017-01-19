@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Linq;
+using System.Diagnostics;
 
 namespace JonasPluginBase
 {
@@ -21,69 +22,77 @@ namespace JonasPluginBase
         public void Associate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities)
         {
             bag.Trace($"Associate({entityName}, {entityId}, {relationship.SchemaName}, {relatedEntities.Count})");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             service.Associate(entityName, entityId, relationship, relatedEntities);
-            bag.Trace($"Associated in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Associated in: {watch.ElapsedMilliseconds} ms");
         }
 
         public Guid Create(Entity entity)
         {
             bag.Trace($"Create({entity.LogicalName}) {entity.Id} ({entity.Attributes.Count} attributes)");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             var result = service.Create(entity);
-            bag.Trace($"Created in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Created in: {watch.ElapsedMilliseconds} ms");
             return result;
         }
 
         public void Delete(string entityName, Guid id)
         {
             bag.Trace($"Delete({entityName}, {id})");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             service.Delete(entityName, id);
-            bag.Trace($"Deleted in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Deleted in: {watch.ElapsedMilliseconds} ms");
         }
 
         public void Disassociate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities)
         {
             bag.Trace($"Disassociate({entityName}, {entityId}, {relationship.SchemaName}, {relatedEntities.Count})");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             service.Disassociate(entityName, entityId, relationship, relatedEntities);
-            bag.Trace($"Disassociated in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Disassociated in: {watch.ElapsedMilliseconds} ms");
         }
 
         public OrganizationResponse Execute(OrganizationRequest request)
         {
             bag.Trace($"Execute({request.RequestName})");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             var result = service.Execute(request);
-            bag.Trace($"Executed in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Executed in: {watch.ElapsedMilliseconds} ms");
             return result;
         }
 
         public Entity Retrieve(string entityName, Guid id, ColumnSet columnSet)
         {
             bag.Trace($"Retrieve({entityName}, {id}, {columnSet.Columns.Count})");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             var result = service.Retrieve(entityName, id, columnSet);
-            bag.Trace($"Retrieved in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Retrieved in: {watch.ElapsedMilliseconds} ms");
             return result;
         }
 
         public EntityCollection RetrieveMultiple(QueryBase query)
         {
             bag.Trace("RetrieveMultiple({0})", query is QueryExpression ? ((QueryExpression)query).EntityName : query is QueryByAttribute ? ((QueryByAttribute)query).EntityName : query is FetchExpression ? "fetchxml" : "unkstartn");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             var result = service.RetrieveMultiple(query);
-            bag.Trace($"Retrieved {result.Entities.Count} records in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Retrieved {result.Entities.Count} records in: {watch.ElapsedMilliseconds} ms");
             return result;
         }
 
         public void Update(Entity entity)
         {
             bag.Trace($"Update({entity.LogicalName}) {entity.Id} ({entity.Attributes.Count} attributes)");
-            var start = DateTime.Now;
+            var watch = Stopwatch.StartNew();
             service.Update(entity);
-            bag.Trace($"Updated in: {DateTime.Now - start}");
+            watch.Stop();
+            bag.Trace($"Updated in: {watch.ElapsedMilliseconds} ms");
         }
     }
 }
