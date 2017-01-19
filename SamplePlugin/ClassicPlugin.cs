@@ -22,17 +22,9 @@ namespace SamplePlugin
         public void Execute(IServiceProvider serviceProvider)
         {
             var context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-            if (context.PrimaryEntityName != "contact" || !context.InputParameters.Contains("Target"))
-            {
-                return;
-            }
-            Guid accountid = GetAccountId(context);
-            if (accountid.Equals(Guid.Empty))
-            {
-                return;
-            }
+            var accountid = GetAccountId(context);
 
-            IOrganizationServiceFactory serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
+            var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(null);
 
             var fetchexpr = new FetchExpression(string.Format(fetch, accountid));
