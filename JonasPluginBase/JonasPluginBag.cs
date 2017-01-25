@@ -129,11 +129,37 @@ namespace JonasPluginBase
         private void Init()
         {
             Trace("*** Enter");
+            LogTheContext(Context);
             var entity = TargetEntity;
             if (entity != null)
             {
                 var attrs = ExtractAttributesFromEntity(entity);
                 Trace("Incoming {0}:{1}", entity.LogicalName, attrs);
+            }
+        }
+
+        private void LogTheContext(IPluginExecutionContext context)
+        {
+            if (context == null)
+                return;
+            var step = context.OwningExtension != null ? !string.IsNullOrEmpty(context.OwningExtension.Name) ? context.OwningExtension.Name : context.OwningExtension.Id.ToString() : "null";
+            trace.Trace($@"  Step:  {step}
+  Msg:   {context.MessageName}
+  Stage: {context.Stage}
+  Mode:  {context.Mode}
+  Depth: {context.Depth}
+  Type:  {context.PrimaryEntityName}
+  Id:    {context.PrimaryEntityId}
+  User:  {context.UserId}
+");
+            var parentcontext = context.ParentContext;
+            while (parentcontext != null && parentcontext.Stage == 30)
+            {   // Skip mainoperation
+                parentcontext = parentcontext.ParentContext;
+            }
+            if (parentcontext != null)
+            {
+                LogTheContext(parentcontext);
             }
         }
 
@@ -186,6 +212,10 @@ namespace JonasPluginBase
                         if (origValue is EntityReference)
                         {
                             var er = (EntityReference)origValue;
+                            if (!string.IsNullOrEmpty(er.Name))
+                            {
+                                baseType += " " + er.Name;
+                            }
                             if (!string.IsNullOrEmpty(er.LogicalName))
                             {
                                 baseType += " " + er.LogicalName;
@@ -193,10 +223,6 @@ namespace JonasPluginBase
                             else
                             {
                                 baseType += " No LogicalName available!";
-                            }
-                            if (!string.IsNullOrEmpty(er.Name))
-                            {
-                                baseType += " " + er.Name;
                             }
                         }
                     }
@@ -247,7 +273,7 @@ namespace JonasPluginBase
                     "Unable to retrieve metadata/primaryattribute for entity: " + entityName);
             }
         }
-        
+
         #endregion Private/Internal stuff
     }
 }
