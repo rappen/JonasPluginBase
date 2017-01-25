@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
+using System.Diagnostics;
 
 namespace JonasPluginBase
 {
@@ -9,9 +10,10 @@ namespace JonasPluginBase
         {
             using (var bag = new JonasPluginBag(serviceProvider))
             {
-                var start = DateTime.Now;
+                var watch = Stopwatch.StartNew();
                 Execute(bag);
-                bag.Trace("Internal execution time: {0}", DateTime.Now - start);
+                watch.Stop();
+                bag.Trace("Internal execution time: {0} ms", watch.ElapsedMilliseconds);
             }
         }
 
