@@ -134,7 +134,7 @@ namespace JonasPluginBase
             if (entity != null)
             {
                 var attrs = ExtractAttributesFromEntity(entity);
-                Trace("Incoming {0}:{1}", entity.LogicalName, attrs);
+                Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
             }
         }
 
