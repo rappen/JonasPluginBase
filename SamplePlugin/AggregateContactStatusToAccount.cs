@@ -4,7 +4,7 @@ using SamplePlugin.Extensions;
 
 namespace SamplePlugin
 {
-    public class AwesomePlugin : JonasPluginBase.JonasPluginBase
+    public class AggregateContactStatusToAccount : JonasPluginBase.JonasPluginBase
     {
         public override void Execute(JonasPluginBag bag)
         {

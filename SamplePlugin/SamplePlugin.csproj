@@ -71,7 +71,7 @@
   <ItemGroup>
     <Compile Include="AccountVerification.cs" />
     <Compile Include="Extensions\BagExtensions.cs" />
-    <Compile Include="AwesomePlugin.cs" />
+    <Compile Include="AggregateContactStatusToAccount.cs" />
     <Compile Include="ClassicPlugin.cs" />
     <Compile Include="Extensions\ContextExtensions.cs" />
     <Compile Include="Extensions\ContactExtensions.cs" />
