@@ -8,7 +8,7 @@ namespace SamplePlugin
     {
         public override void Execute(JonasPluginBag bag)
         {
-            if (!bag.Context.ContactTriggered())
+            if (!bag.PluginContext.ContactTriggered())
             {
                 bag.Trace("Context not satisfying");
                 return;

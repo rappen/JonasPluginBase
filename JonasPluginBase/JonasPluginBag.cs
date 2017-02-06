@@ -5,38 +5,46 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Activities;
+using Microsoft.Xrm.Sdk.Workflow;
 
 namespace JonasPluginBase
 {
     public class JonasPluginBag : IDisposable
     {
         #region Private properties
-        private IServiceProvider provider;
 
         private ITracingService trace { get; }
+
+        private CodeActivityContext codeActivityContext;
+        
         #endregion Private properties
 
         #region Public properties
 
         public JonasServiceProxy Service { get; }
 
-        public IPluginExecutionContext Context { get; }
+        private IExecutionContext context { get; }
+
+        public IPluginExecutionContext PluginContext { get { return context as IPluginExecutionContext; } }
+
+        public IWorkflowContext WorkflowContext { get { return context as IWorkflowContext; } }
 
         public Entity TargetEntity
         {
             get
             {
-                if (Context != null &&
-                    Context.InputParameters.Contains("Target") &&
-                    Context.InputParameters["Target"] is Entity)
+                if (context != null &&
+                    context.InputParameters.Contains("Target") &&
+                    context.InputParameters["Target"] is Entity)
                 {
-                    return (Entity)Context.InputParameters["Target"];
+                    return (Entity)context.InputParameters["Target"];
                 }
                 return null;
             }
             set
             {
-                Context.InputParameters["Target"] = value;
+                context.InputParameters["Target"] = value;
             }
         }
 
@@ -44,11 +52,11 @@ namespace JonasPluginBase
         {
             get
             {
-                if (Context != null &&
-                    Context.PreEntityImages != null &&
-                    Context.PreEntityImages.Count > 0)
+                if (context != null &&
+                    context.PreEntityImages != null &&
+                    context.PreEntityImages.Count > 0)
                 {
-                    return Context.PreEntityImages.Values.FirstOrDefault();
+                    return context.PreEntityImages.Values.FirstOrDefault();
                 }
                 return null;
             }
@@ -58,11 +66,11 @@ namespace JonasPluginBase
         {
             get
             {
-                if (Context != null &&
-                    Context.PostEntityImages != null &&
-                    Context.PostEntityImages.Count > 0)
+                if (context != null &&
+                    context.PostEntityImages != null &&
+                    context.PostEntityImages.Count > 0)
                 {
-                    return Context.PostEntityImages.Values.FirstOrDefault();
+                    return context.PostEntityImages.Values.FirstOrDefault();
                 }
                 return null;
             }
@@ -74,10 +82,20 @@ namespace JonasPluginBase
 
         public JonasPluginBag(IServiceProvider serviceProvider)
         {
-            provider = serviceProvider;
             trace = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-            Context = (IPluginExecutionContext)provider.GetService(typeof(IPluginExecutionContext));
+            context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
+            var service = serviceFactory.CreateOrganizationService(null);
+            Service = new JonasServiceProxy(service, this);
+            Init();
+        }
+
+        public JonasPluginBag(CodeActivityContext executionContext)
+        {
+            codeActivityContext = executionContext;
+            trace = executionContext.GetExtension<ITracingService>();
+            context = executionContext.GetExtension<IWorkflowContext>();
+            var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
             var service = serviceFactory.CreateOrganizationService(null);
             Service = new JonasServiceProxy(service, this);
             Init();
@@ -86,13 +104,17 @@ namespace JonasPluginBase
         public JonasPluginBag(IOrganizationService service, IPluginExecutionContext context, ITracingService trace)
         {
             this.Service = new JonasServiceProxy(service, this);
-            this.Context = context;
+            this.context = context;
             this.trace = trace;
             Init();
         }
 
         public void Trace(string format, params object[] args)
         {
+            if (trace == null)
+            {
+                return;
+            }
             var s = string.Format(format, args);
             trace.Trace(DateTime.Now.ToString("HH:mm:ss.fff") + "\t" + s);
         }
@@ -117,6 +139,12 @@ namespace JonasPluginBase
             return result;
         }
 
+        public T GetParameter<T>(ref InArgument<T> parameter)
+        {
+            T result = parameter.Get(codeActivityContext);
+            return result;
+        }
+
         public void Dispose()
         {
             Trace("*** Exit");
@@ -129,7 +157,7 @@ namespace JonasPluginBase
         private void Init()
         {
             Trace("*** Enter");
-            LogTheContext(Context);
+            LogTheContext(context);
             var entity = TargetEntity;
             if (entity != null)
             {
@@ -138,21 +166,22 @@ namespace JonasPluginBase
             }
         }
 
-        private void LogTheContext(IPluginExecutionContext context)
+        private void LogTheContext(IExecutionContext context)
         {
             if (context == null)
                 return;
             var step = context.OwningExtension != null ? !string.IsNullOrEmpty(context.OwningExtension.Name) ? context.OwningExtension.Name : context.OwningExtension.Id.ToString() : "null";
+            var stage = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).Stage : 0;
             trace.Trace($@"  Step:  {step}
   Msg:   {context.MessageName}
-  Stage: {context.Stage}
+  Stage: {stage}
   Mode:  {context.Mode}
   Depth: {context.Depth}
   Type:  {context.PrimaryEntityName}
   Id:    {context.PrimaryEntityId}
   User:  {context.UserId}
 ");
-            var parentcontext = context.ParentContext;
+            var parentcontext = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).ParentContext : null;
             while (parentcontext != null && parentcontext.Stage == 30)
             {   // Skip mainoperation
                 parentcontext = parentcontext.ParentContext;
