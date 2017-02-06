@@ -1,18 +1,17 @@
-﻿using Microsoft.Xrm.Sdk;
-using System;
+﻿using System;
 using System.Activities;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JonasPluginBase
 {
     public abstract class JonasCodeActivityBase : CodeActivity
     {
+        private CodeActivityContext codeActivityContext;
+
         protected override void Execute(CodeActivityContext context)
         {
+            codeActivityContext = context;
+
             using (var bag = new JonasPluginBag(context))
             {
                 var watch = Stopwatch.StartNew();
@@ -34,5 +33,16 @@ namespace JonasPluginBase
         }
 
         public abstract void Execute(JonasPluginBag bag);
+
+        public T GetCodeActivityParameter<T>(InArgument<T> parameter)
+        {
+            T result = parameter.Get(codeActivityContext);
+            return result;
+        }
+
+        public void SetCodeActivityParameter<T>(OutArgument<T> parameter, T value)
+        {
+            parameter.Set(codeActivityContext, value);
+        }
     }
 }

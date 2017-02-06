@@ -10,14 +10,15 @@ using Microsoft.Xrm.Sdk.Workflow;
 
 namespace JonasPluginBase
 {
+    /// <summary>
+    /// A bag of useful stuff when developing plugins of different types for Microsoft Dynamics 365
+    /// </summary>
     public class JonasPluginBag : IDisposable
     {
         #region Private properties
 
         private ITracingService trace { get; }
 
-        private CodeActivityContext codeActivityContext;
-        
         #endregion Private properties
 
         #region Public properties
@@ -92,7 +93,6 @@ namespace JonasPluginBase
 
         public JonasPluginBag(CodeActivityContext executionContext)
         {
-            codeActivityContext = executionContext;
             trace = executionContext.GetExtension<ITracingService>();
             context = executionContext.GetExtension<IWorkflowContext>();
             var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
@@ -136,12 +136,6 @@ namespace JonasPluginBase
             }
             var result = plmeta.OptionSet.Options.FirstOrDefault(o => o.Value == value)?.Label?.UserLocalizedLabel?.Label;
             Trace($"Returning label for value {value}: {result}");
-            return result;
-        }
-
-        public T GetParameter<T>(ref InArgument<T> parameter)
-        {
-            T result = parameter.Get(codeActivityContext);
             return result;
         }
 
