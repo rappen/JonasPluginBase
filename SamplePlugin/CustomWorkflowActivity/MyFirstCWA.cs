@@ -1,7 +1,7 @@
-﻿using System;
-using JonasPluginBase;
+﻿using JonasPluginBase;
 using System.Activities;
 using Microsoft.Xrm.Sdk.Workflow;
+using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin.CustomWorkflowActivity
 {
@@ -9,14 +9,12 @@ namespace SamplePlugin.CustomWorkflowActivity
     {
         public override void Execute(JonasPluginBag bag)
         {
-            var ss = SomeString;
-            var s = bag.GetParameter(ref ss);
-
-
+            var s = GetCodeActivityParameter(SomeString);
             bag.Trace("SomeString: {0}", s);
-            var sn = SomeNumber;
-            var n = bag.GetParameter(ref sn);
+            var n = GetCodeActivityParameter(SomeNumber);
             bag.Trace("SomeNumber: {0}", n);
+
+            SetCodeActivityParameter(ResultingUser, new EntityReference("systemuser", bag.WorkflowContext.UserId));
         }
 
         [Input("Some string")]
@@ -26,5 +24,9 @@ namespace SamplePlugin.CustomWorkflowActivity
         [Input("Some number")]
         [Default("5")]
         public InArgument<int> SomeNumber { get; set; }
+
+        [Output("Resulting user")]
+        [ReferenceTarget("systemuser")]
+        public OutArgument<EntityReference> ResultingUser { get; set; }
     }
 }
