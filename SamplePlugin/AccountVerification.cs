@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JonasPluginBase;
+﻿using JonasPluginBase;
 using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
@@ -24,6 +19,10 @@ namespace SamplePlugin
         {
             if (!bag.TargetEntity.Contains("fax"))
             {
+                if (bag.PostImage != null && bag.PostImage.Contains("fax"))
+                {
+                    throw new InvalidPluginExecutionException("You really should remove Fax no before continuing");
+                }
                 bag.Trace("Fax was not touched, keep moving.");
                 return;
             }

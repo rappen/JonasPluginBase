@@ -5,7 +5,7 @@ namespace SamplePlugin.Extensions
 {
     internal static class ContextExtensions
     {
-        internal static bool ContactTriggered(this IPluginExecutionContext context)
+        internal static bool ContactTriggered(this IExecutionContext context)
         {
             return context.PrimaryEntityName == "contact" && context.InputParameters.Contains("Target");
         }
