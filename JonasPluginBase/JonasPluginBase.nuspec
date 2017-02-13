@@ -6,6 +6,7 @@
     <title>JonasPluginBase</title>
     <authors>Jonas Rapp</authors>
     <owners>Jonas Rapp</owners>
+    <iconUrl>https://raw.githubusercontent.com/rappen/JonasPluginBase/master/images/J365-150.jpg</iconUrl>
     <projectUrl>https://github.com/rappen/JonasPluginBase</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Base class for Microsoft Dynamics 365/CRM plugins</description>
