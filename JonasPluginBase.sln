@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePlugin", "SamplePlugi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JonasPluginBase", "JonasPluginBase\JonasPluginBase.csproj", "{F45D7F7F-D0E4-4550-92FE-301193C97793}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B74F72C-115E-4DD0-A70B-85FDA3047439}"
+	ProjectSection(SolutionItems) = preProject
+		JonasPluginBase.nuspec = JonasPluginBase.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
