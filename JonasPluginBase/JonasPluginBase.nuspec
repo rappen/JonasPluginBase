@@ -15,8 +15,8 @@
     <copyright>Copyright 2017 Jonas Rapp</copyright>
     <tags>MSDyn365 Plugin</tags>
     <dependencies>
-      <package id="Microsoft.CrmSdk.CoreAssemblies" version="8.2.0.2"/>
-      <package id="Microsoft.CrmSdk.Workflow" version="8.2.0.2"/>
+      <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="8.2.0.2"/>
+      <dependency id="Microsoft.CrmSdk.Workflow" version="8.2.0.2"/>
     </dependencies>
   </metadata>
 </package>
