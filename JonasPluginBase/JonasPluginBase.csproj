@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="JonasKey.snk" />
+    <None Include="JonasPluginBase.nuspec" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
