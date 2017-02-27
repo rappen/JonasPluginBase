@@ -99,9 +99,9 @@ namespace JonasPluginBase
 
         public JonasPluginBag(IOrganizationService service, IPluginExecutionContext context, ITracingService trace)
         {
+            Trace = new JonasTracingService(trace);
             Service = new JonasServiceProxy(service, this);
             this.context = context;
-            Trace = new JonasTracingService(trace);
             Init();
         }
 
@@ -125,10 +125,7 @@ namespace JonasPluginBase
             return result;
         }
 
-        public void Dispose()
-        {
-            Trace.Trace("*** Exit");
-        }
+        public void Dispose() { }
 
         #endregion Public methods
 
@@ -136,7 +133,6 @@ namespace JonasPluginBase
 
         private void Init()
         {
-            Trace.Trace("*** Enter");
             LogTheContext(context);
             var entity = TargetEntity;
             if (entity != null)

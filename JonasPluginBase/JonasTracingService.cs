@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 
 namespace JonasPluginBase
 {
-    public class JonasTracingService : ITracingService
+    public class JonasTracingService : ITracingService, IDisposable
     {
         private ITracingService trace;
 
         public JonasTracingService(ITracingService Trace)
         {
             trace = Trace;
+            this.Trace("*** Enter");
+        }
+
+        public void Dispose()
+        {
+            Trace("*** Exit");
         }
 
         public void Trace(string format, params object[] args)
