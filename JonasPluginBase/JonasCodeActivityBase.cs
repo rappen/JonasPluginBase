@@ -21,13 +21,13 @@ namespace JonasPluginBase
                 }
                 catch (Exception e)
                 {
-                    bag.Trace.Trace("*** Exception ***\n{0}", e);
+                    bag.Trace("*** Exception ***\n{0}", e);
                     throw;
                 }
                 finally
                 {
                     watch.Stop();
-                    bag.Trace.Trace("Internal execution time: {0} ms", watch.ElapsedMilliseconds);
+                    bag.Trace("Internal execution time: {0} ms", watch.ElapsedMilliseconds);
                 }
             }
         }

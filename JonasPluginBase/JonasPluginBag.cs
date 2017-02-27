@@ -19,7 +19,7 @@ namespace JonasPluginBase
 
         public JonasServiceProxy Service { get; }
 
-        public JonasTracingService Trace { get; }
+        public JonasTracingService TracingService { get; }
 
         private IExecutionContext context { get; }
 
@@ -79,7 +79,7 @@ namespace JonasPluginBase
 
         public JonasPluginBag(IServiceProvider serviceProvider)
         {
-            Trace = new JonasTracingService((ITracingService)serviceProvider.GetService(typeof(ITracingService)));
+            TracingService = new JonasTracingService((ITracingService)serviceProvider.GetService(typeof(ITracingService)));
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(null);
@@ -89,7 +89,7 @@ namespace JonasPluginBase
 
         public JonasPluginBag(CodeActivityContext executionContext)
         {
-            Trace = new JonasTracingService(executionContext.GetExtension<ITracingService>());
+            TracingService = new JonasTracingService(executionContext.GetExtension<ITracingService>());
             context = executionContext.GetExtension<IWorkflowContext>();
             var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
             var service = serviceFactory.CreateOrganizationService(null);
@@ -99,15 +99,20 @@ namespace JonasPluginBase
 
         public JonasPluginBag(IOrganizationService service, IPluginExecutionContext context, ITracingService trace)
         {
-            Trace = new JonasTracingService(trace);
+            TracingService = new JonasTracingService(trace);
             Service = new JonasServiceProxy(service, this);
             this.context = context;
             Init();
         }
 
+        public void Trace(string format, params object[] args)
+        {
+            TracingService.Trace(format, args);
+        }
+
         public string GetOptionsetLabel(string entity, string attribute, int value)
         {
-            Trace.Trace($"Getting metadata for {entity}.{attribute}");
+            Trace($"Getting metadata for {entity}.{attribute}");
             var req = new RetrieveAttributeRequest
             {
                 EntityLogicalName = entity,
@@ -121,7 +126,7 @@ namespace JonasPluginBase
                 throw new InvalidPluginExecutionException($"{entity}.{attribute} does not appear to be an optionset");
             }
             var result = plmeta.OptionSet.Options.FirstOrDefault(o => o.Value == value)?.Label?.UserLocalizedLabel?.Label;
-            Trace.Trace($"Returning label for value {value}: {result}");
+            Trace($"Returning label for value {value}: {result}");
             return result;
         }
 
@@ -138,7 +143,7 @@ namespace JonasPluginBase
             if (entity != null)
             {
                 var attrs = ExtractAttributesFromEntity(entity, PreImage);
-                Trace.Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
+                Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
             }
         }
 
@@ -148,7 +153,7 @@ namespace JonasPluginBase
                 return;
             var step = context.OwningExtension != null ? !string.IsNullOrEmpty(context.OwningExtension.Name) ? context.OwningExtension.Name : context.OwningExtension.Id.ToString() : "null";
             var stage = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).Stage : 0;
-            Trace.Trace($@"  Step:  {step}
+            Trace($@"  Step:  {step}
   Msg:   {context.MessageName}
   Stage: {stage}
   Mode:  {context.Mode}
@@ -269,12 +274,12 @@ namespace JonasPluginBase
                 EntityFilters = EntityFilters.Entity,
                 RetrieveAsIfPublished = true
             });
-            Trace.Trace("Metadata retrieved for {0}", entityName);
+            Trace("Metadata retrieved for {0}", entityName);
             if (metabase != null)
             {
                 EntityMetadata meta = metabase.EntityMetadata;
                 var result = meta.PrimaryNameAttribute;
-                Trace.Trace("Primary attribute is: {0}", result);
+                Trace("Primary attribute is: {0}", result);
                 return result;
             }
             else
