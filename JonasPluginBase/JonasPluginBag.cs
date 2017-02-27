@@ -15,15 +15,11 @@ namespace JonasPluginBase
     /// </summary>
     public class JonasPluginBag : IDisposable
     {
-        #region Private properties
-
-        private ITracingService trace { get; }
-
-        #endregion Private properties
-
         #region Public properties
 
         public JonasServiceProxy Service { get; }
+
+        public JonasTracingService Trace { get; }
 
         private IExecutionContext context { get; }
 
@@ -83,7 +79,7 @@ namespace JonasPluginBase
 
         public JonasPluginBag(IServiceProvider serviceProvider)
         {
-            trace = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
+            Trace = new JonasTracingService((ITracingService)serviceProvider.GetService(typeof(ITracingService)));
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(null);
@@ -93,7 +89,7 @@ namespace JonasPluginBase
 
         public JonasPluginBag(CodeActivityContext executionContext)
         {
-            trace = executionContext.GetExtension<ITracingService>();
+            Trace = new JonasTracingService(executionContext.GetExtension<ITracingService>());
             context = executionContext.GetExtension<IWorkflowContext>();
             var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
             var service = serviceFactory.CreateOrganizationService(null);
@@ -103,25 +99,15 @@ namespace JonasPluginBase
 
         public JonasPluginBag(IOrganizationService service, IPluginExecutionContext context, ITracingService trace)
         {
-            this.Service = new JonasServiceProxy(service, this);
+            Service = new JonasServiceProxy(service, this);
             this.context = context;
-            this.trace = trace;
+            Trace = new JonasTracingService(trace);
             Init();
-        }
-
-        public void Trace(string format, params object[] args)
-        {
-            if (trace == null)
-            {
-                return;
-            }
-            var s = string.Format(format, args);
-            trace.Trace(DateTime.Now.ToString("HH:mm:ss.fff") + "\t" + s);
         }
 
         public string GetOptionsetLabel(string entity, string attribute, int value)
         {
-            Trace($"Getting metadata for {entity}.{attribute}");
+            Trace.Trace($"Getting metadata for {entity}.{attribute}");
             var req = new RetrieveAttributeRequest
             {
                 EntityLogicalName = entity,
@@ -135,13 +121,13 @@ namespace JonasPluginBase
                 throw new InvalidPluginExecutionException($"{entity}.{attribute} does not appear to be an optionset");
             }
             var result = plmeta.OptionSet.Options.FirstOrDefault(o => o.Value == value)?.Label?.UserLocalizedLabel?.Label;
-            Trace($"Returning label for value {value}: {result}");
+            Trace.Trace($"Returning label for value {value}: {result}");
             return result;
         }
 
         public void Dispose()
         {
-            Trace("*** Exit");
+            Trace.Trace("*** Exit");
         }
 
         #endregion Public methods
@@ -150,13 +136,13 @@ namespace JonasPluginBase
 
         private void Init()
         {
-            Trace("*** Enter");
+            Trace.Trace("*** Enter");
             LogTheContext(context);
             var entity = TargetEntity;
             if (entity != null)
             {
                 var attrs = ExtractAttributesFromEntity(entity);
-                Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
+                Trace.Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
             }
         }
 
@@ -166,7 +152,7 @@ namespace JonasPluginBase
                 return;
             var step = context.OwningExtension != null ? !string.IsNullOrEmpty(context.OwningExtension.Name) ? context.OwningExtension.Name : context.OwningExtension.Id.ToString() : "null";
             var stage = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).Stage : 0;
-            trace.Trace($@"  Step:  {step}
+            Trace.Trace($@"  Step:  {step}
   Msg:   {context.MessageName}
   Stage: {stage}
   Mode:  {context.Mode}
@@ -176,7 +162,7 @@ namespace JonasPluginBase
   User:  {context.UserId}
 ");
             var parentcontext = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).ParentContext : null;
-            while (parentcontext != null && parentcontext.Stage == 30)
+            while (parentcontext != null /*&& parentcontext.Stage == 30*/)
             {   // Skip mainoperation
                 parentcontext = parentcontext.ParentContext;
             }
@@ -282,12 +268,12 @@ namespace JonasPluginBase
                 EntityFilters = EntityFilters.Entity,
                 RetrieveAsIfPublished = true
             });
-            Trace("Metadata retrieved for {0}", entityName);
+            Trace.Trace("Metadata retrieved for {0}", entityName);
             if (metabase != null)
             {
                 EntityMetadata meta = metabase.EntityMetadata;
                 var result = meta.PrimaryNameAttribute;
-                Trace("Primary attribute is: {0}", result);
+                Trace.Trace("Primary attribute is: {0}", result);
                 return result;
             }
             else

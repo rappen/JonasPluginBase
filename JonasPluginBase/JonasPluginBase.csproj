@@ -77,6 +77,7 @@
     <Compile Include="JonasPluginBag.cs" />
     <Compile Include="JonasPluginBase.cs" />
     <Compile Include="JonasServiceProxy.cs" />
+    <Compile Include="JonasTracingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
