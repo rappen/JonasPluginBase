@@ -137,7 +137,7 @@ namespace JonasPluginBase
             var entity = TargetEntity;
             if (entity != null)
             {
-                var attrs = ExtractAttributesFromEntity(entity);
+                var attrs = ExtractAttributesFromEntity(entity, PreImage);
                 Trace.Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
             }
         }
@@ -168,7 +168,7 @@ namespace JonasPluginBase
             }
         }
 
-        private static string ExtractAttributesFromEntity(Entity entity)
+        private static string ExtractAttributesFromEntity(Entity entity, Entity preimage)
         {
             string attrs = "";
             List<string> keys = new List<string>(entity.Attributes.Keys);
@@ -186,8 +186,8 @@ namespace JonasPluginBase
             {
                 if (attr != "createdon" & attr != "createdby" && attr != "createdonbehalfby" && attr != "modifiedon" & attr != "modifiedby" && attr != "modifiedonbehalfby")
                 {
-                    object origValue, baseValue = null;
-                    string origType = string.Empty, baseType = string.Empty;
+                    object origValue, preValue, baseValue = null;
+                    string origType = string.Empty, resultValue = string.Empty;
 
                     origValue = entity.Attributes[attr];
 
@@ -203,31 +203,31 @@ namespace JonasPluginBase
 
                     if (baseValue == null)
                     {
-                        baseType = "<null>";
+                        resultValue = "<null>";
                     }
                     else
                     {
-                        baseType = baseValue.ToString();
-                        if (baseType.Contains("\n"))
+                        resultValue = baseValue.ToString();
+                        if (resultValue.Contains("\n"))
                         {
-                            baseType = "\n" + baseType;
-                            baseType = baseType.Replace("\n", "\n" + newLinePad);
+                            resultValue = "\n" + resultValue;
+                            resultValue = resultValue.Replace("\n", "\n" + newLinePad);
                         }
-                        baseType += " (" + origType + ")";
+                        resultValue += " (" + origType + ")";
                         if (origValue is EntityReference)
                         {
                             var er = (EntityReference)origValue;
                             if (!string.IsNullOrEmpty(er.Name))
                             {
-                                baseType += " " + er.Name;
+                                resultValue += " " + er.Name;
                             }
                             if (!string.IsNullOrEmpty(er.LogicalName))
                             {
-                                baseType += " " + er.LogicalName;
+                                resultValue += " " + er.LogicalName;
                             }
                             else
                             {
-                                baseType += " No LogicalName available!";
+                                resultValue += " No LogicalName available!";
                             }
                         }
                     }
@@ -236,7 +236,12 @@ namespace JonasPluginBase
                     {
                         attpad.Append(" ");
                     }
-                    attrs = $"{attrs}\n  {attpad} = {baseType}";
+                    attrs = $"{attrs}\n  {attpad} = {resultValue}";
+                    if (preimage != null && preimage.Contains(attr))
+                    {
+                        preValue = AttributeToBaseType(preimage[attr]);
+                        attrs += $"  PRE: {preValue}";
+                    }
                 }
             }
             return attrs;
