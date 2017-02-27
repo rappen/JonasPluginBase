@@ -130,7 +130,13 @@ namespace JonasPluginBase
             return result;
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            if (TracingService != null)
+            {
+                TracingService.Dispose();
+            }
+        }
 
         #endregion Public methods
 
@@ -153,11 +159,13 @@ namespace JonasPluginBase
                 return;
             var step = context.OwningExtension != null ? !string.IsNullOrEmpty(context.OwningExtension.Name) ? context.OwningExtension.Name : context.OwningExtension.Id.ToString() : "null";
             var stage = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).Stage : 0;
-            Trace($@"  Step:  {step}
+            Trace($@"Context details:
+  Step:  {step}
   Msg:   {context.MessageName}
   Stage: {stage}
   Mode:  {context.Mode}
   Depth: {context.Depth}
+  Corr:  {context.CorrelationId}
   Type:  {context.PrimaryEntityName}
   Id:    {context.PrimaryEntityId}
   User:  {context.UserId}
@@ -186,7 +194,6 @@ namespace JonasPluginBase
                     attlen = Math.Max(attlen, attr.Length);
                 }
             }
-            var newLinePad = "".PadLeft(attlen + 7);
             foreach (string attr in keys)
             {
                 if (attr != "createdon" & attr != "createdby" && attr != "createdonbehalfby" && attr != "modifiedon" & attr != "modifiedby" && attr != "modifiedonbehalfby")
@@ -212,12 +219,7 @@ namespace JonasPluginBase
                     }
                     else
                     {
-                        resultValue = baseValue.ToString();
-                        if (resultValue.Contains("\n"))
-                        {
-                            resultValue = "\n" + resultValue;
-                            resultValue = resultValue.Replace("\n", "\n" + newLinePad);
-                        }
+                        resultValue = ValueToString(baseValue, attlen);
                         resultValue += " (" + origType + ")";
                         if (origValue is EntityReference)
                         {
@@ -236,20 +238,40 @@ namespace JonasPluginBase
                             }
                         }
                     }
-                    var attpad = new StringBuilder(attr);
-                    while (attpad.Length < attlen)
+                    var newline = $"\n  {attr.PadRight(attlen)} = {resultValue}";
+                    if (attr.Equals(entity.LogicalName + "id"))
                     {
-                        attpad.Append(" ");
+                        attrs = newline + attrs;
                     }
-                    attrs = $"{attrs}\n  {attpad} = {resultValue}";
-                    if (preimage != null && preimage.Contains(attr))
+                    else
                     {
-                        preValue = AttributeToBaseType(preimage[attr]);
-                        attrs += $"  PRE: {preValue}";
+                        attrs += newline;
+                        if (preimage != null && !attr.Equals(entity.LogicalName + "id") && preimage.Contains(attr))
+                        {
+                            preValue = AttributeToBaseType(preimage[attr]);
+                            if (preValue.Equals(baseValue))
+                            {
+                                preValue = "<not changed>";
+                            }
+                            var a = new string(' ', attlen);
+                            attrs += $"\n   {("PRE").PadLeft(attlen)}: {ValueToString(preValue, attlen)}";
+                        }
                     }
                 }
             }
             return attrs;
+        }
+
+        private static string ValueToString(object value, int baseIndent)
+        {
+            string resultValue = value.ToString();
+            if (resultValue.Contains("\n"))
+            {
+                var newLinePad = new string(' ', baseIndent + 5);
+                resultValue = resultValue.Replace("\n", "\n" + newLinePad);
+            }
+
+            return resultValue;
         }
 
         private static object AttributeToBaseType(object attribute)
