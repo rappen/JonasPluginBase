@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace JonasPluginBase
 {
     /// <summary>
-    /// JonasPluginBase inherits IPlugin to encapsulate a JonasPluginBag containing stuff from the service and context, and to log service requests to the Tracing Service.
+    /// JonasPluginBase implements IPlugin to encapsulate a JonasPluginBag containing stuff from the service and context, and to log service requests to the Tracing Service.
     /// Remember to merge this assemply with the plugin assembly using a post-build event like this example:
     /// ilmerge.exe /keyfile:..\..\JonasKey.snk /target:library /copyattrs /targetplatform:v4,"C:\Windows\Microsoft.NET\Framework\v4.0.30319" "/out:$(TargetName).Merged.dll" "$(TargetFileName)" "JonasPluginBase.dll"
     /// </summary>
