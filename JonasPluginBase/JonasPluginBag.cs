@@ -21,8 +21,6 @@ namespace JonasPluginBase
 
         public JonasTracingService TracingService { get; }
 
-        private IExecutionContext context { get; }
-
         public IPluginExecutionContext PluginContext { get { return context as IPluginExecutionContext; } }
 
         public IWorkflowContext WorkflowContext { get { return context as IWorkflowContext; } }
@@ -73,10 +71,26 @@ namespace JonasPluginBase
             }
         }
 
+        public Entity CompleteEntity
+        {
+            get
+            {
+                if (completeEntity == null)
+                {
+                    completeEntity = TargetEntity.Clone().Merge(PostImage).Merge(PreImage);
+                }
+                return completeEntity;
+            }
+        }
+
         #endregion Public properties
 
         #region Public methods
 
+        /// <summary>
+        /// Constructor to be used from a Microsoft Dynamics CRM (365) plugin
+        /// </summary>
+        /// <param name="serviceProvider">IServiceProvider passed to the IPlugin.Execute method</param>
         public JonasPluginBag(IServiceProvider serviceProvider)
         {
             TracingService = new JonasTracingService((ITracingService)serviceProvider.GetService(typeof(ITracingService)));
@@ -87,6 +101,10 @@ namespace JonasPluginBase
             Init();
         }
 
+        /// <summary>
+        /// Constructor to be used from a Microsoft Dynamics CRM (365) custom workflow activity
+        /// </summary>
+        /// <param name="executionContext">CodeActivityContext passed to the CodeActivity.Execute method</param>
         public JonasPluginBag(CodeActivityContext executionContext)
         {
             TracingService = new JonasTracingService(executionContext.GetExtension<ITracingService>());
@@ -97,6 +115,12 @@ namespace JonasPluginBase
             Init();
         }
 
+        /// <summary>
+        /// Constructor to use when JonasPluginBag is used in custom applications
+        /// </summary>
+        /// <param name="service">IOrganizationService connected to Microsoft Dynamics CRM (365)</param>
+        /// <param name="context"></param>
+        /// <param name="trace"></param>
         public JonasPluginBag(IOrganizationService service, IPluginExecutionContext context, ITracingService trace)
         {
             TracingService = new JonasTracingService(trace);
@@ -105,11 +129,23 @@ namespace JonasPluginBase
             Init();
         }
 
+        /// <summary>
+        /// Trace method automatically adding timestamp to each traced item
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
         public void Trace(string format, params object[] args)
         {
             TracingService.Trace(format, args);
         }
 
+        /// <summary>
+        /// Get label for specified optionset attribute and value
+        /// </summary>
+        /// <param name="entity">Entity where the attribute is used</param>
+        /// <param name="attribute">Attribute name</param>
+        /// <param name="value">Value of the optionset for which to return label</param>
+        /// <returns></returns>
         public string GetOptionsetLabel(string entity, string attribute, int value)
         {
             Trace($"Getting metadata for {entity}.{attribute}");
@@ -142,14 +178,18 @@ namespace JonasPluginBase
 
         #region Private/internal stuff
 
+        private IExecutionContext context;
+
+        private Entity completeEntity;
+
         private void Init()
         {
             LogTheContext(context);
             var entity = TargetEntity;
             if (entity != null)
             {
-                var attrs = ExtractAttributesFromEntity(entity, PreImage);
-                Trace("Incoming {0}:{1}\n", entity.LogicalName, attrs);
+                var attrs = entity.ExtractAttributes(PreImage);
+                Trace("Incoming {0}\n{1}\n", entity.LogicalName, attrs);
             }
         }
 
@@ -179,113 +219,6 @@ namespace JonasPluginBase
             {
                 LogTheContext(parentcontext);
             }
-        }
-
-        private static string ExtractAttributesFromEntity(Entity entity, Entity preimage)
-        {
-            string attrs = "";
-            List<string> keys = new List<string>(entity.Attributes.Keys);
-            keys.Sort();
-            int attlen = 0;
-            foreach (string attr in keys)
-            {
-                if (attr != "createdon" & attr != "createdby" && attr != "createdonbehalfby" && attr != "modifiedon" & attr != "modifiedby" && attr != "modifiedonbehalfby")
-                {
-                    attlen = Math.Max(attlen, attr.Length);
-                }
-            }
-            foreach (string attr in keys)
-            {
-                if (attr != "createdon" & attr != "createdby" && attr != "createdonbehalfby" && attr != "modifiedon" & attr != "modifiedby" && attr != "modifiedonbehalfby")
-                {
-                    object origValue, preValue, baseValue = null;
-                    string origType = string.Empty, resultValue = string.Empty;
-
-                    origValue = entity.Attributes[attr];
-
-                    if (origValue != null)
-                    {
-                        origType = origValue.GetType().ToString();
-                        if (origType.Contains("."))
-                        {
-                            origType = origType.Split('.')[origType.Split('.').Length - 1];
-                        }
-                        baseValue = AttributeToBaseType(origValue);
-                    }
-
-                    if (baseValue == null)
-                    {
-                        resultValue = "<null>";
-                    }
-                    else
-                    {
-                        resultValue = ValueToString(baseValue, attlen);
-                        resultValue += " (" + origType + ")";
-                        if (origValue is EntityReference)
-                        {
-                            var er = (EntityReference)origValue;
-                            if (!string.IsNullOrEmpty(er.Name))
-                            {
-                                resultValue += " " + er.Name;
-                            }
-                            if (!string.IsNullOrEmpty(er.LogicalName))
-                            {
-                                resultValue += " " + er.LogicalName;
-                            }
-                            else
-                            {
-                                resultValue += " No LogicalName available!";
-                            }
-                        }
-                    }
-                    var newline = $"\n  {attr.PadRight(attlen)} = {resultValue}";
-                    if (attr.Equals(entity.LogicalName + "id"))
-                    {
-                        attrs = newline + attrs;
-                    }
-                    else
-                    {
-                        attrs += newline;
-                        if (preimage != null && !attr.Equals(entity.LogicalName + "id") && preimage.Contains(attr))
-                        {
-                            preValue = AttributeToBaseType(preimage[attr]);
-                            if (preValue.Equals(baseValue))
-                            {
-                                preValue = "<not changed>";
-                            }
-                            var a = new string(' ', attlen);
-                            attrs += $"\n   {("PRE").PadLeft(attlen)}: {ValueToString(preValue, attlen)}";
-                        }
-                    }
-                }
-            }
-            return attrs;
-        }
-
-        private static string ValueToString(object value, int baseIndent)
-        {
-            string resultValue = value.ToString();
-            if (resultValue.Contains("\n"))
-            {
-                var newLinePad = new string(' ', baseIndent + 5);
-                resultValue = resultValue.Replace("\n", "\n" + newLinePad);
-            }
-
-            return resultValue;
-        }
-
-        private static object AttributeToBaseType(object attribute)
-        {
-            if (attribute is AliasedValue)
-                return AttributeToBaseType(((AliasedValue)attribute).Value);
-            else if (attribute is EntityReference)
-                return ((EntityReference)attribute).Id;
-            else if (attribute is OptionSetValue)
-                return ((OptionSetValue)attribute).Value;
-            else if (attribute is Money)
-                return ((Money)attribute).Value;
-            else
-                return attribute;
         }
 
         internal string PrimaryAttribute(string entityName)
