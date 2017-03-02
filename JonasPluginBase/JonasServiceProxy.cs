@@ -9,8 +9,8 @@ namespace JonasPluginBase
 {
     public class JonasServiceProxy : IOrganizationService
     {
-        private IOrganizationService service;
-        private JonasPluginBag bag;
+        private readonly IOrganizationService service;
+        private readonly JonasPluginBag bag;
 
         /// <summary>
         /// Set this property to True to enable extensive tracing of details regarding queries, entities etc.
@@ -76,12 +76,9 @@ namespace JonasPluginBase
         public OrganizationResponse Execute(OrganizationRequest request)
         {
             bag.trace($"Execute({request.RequestName})");
-            if (TraceDetails)
+            if (TraceDetails && request is ExecuteFetchRequest)
             {
-                if (request is ExecuteFetchRequest)
-                {
-                    bag.trace("FetchXML: {0}", ((ExecuteFetchRequest)request).FetchXml);
-                }
+                bag.trace("FetchXML: {0}", ((ExecuteFetchRequest)request).FetchXml);
             }
             var watch = Stopwatch.StartNew();
             var result = service.Execute(request);

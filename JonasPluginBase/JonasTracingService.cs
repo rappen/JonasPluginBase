@@ -9,7 +9,7 @@ namespace JonasPluginBase
 {
     public class JonasTracingService : ITracingService, IDisposable
     {
-        private ITracingService trace;
+        private readonly ITracingService trace;
 
         public JonasTracingService(ITracingService Trace)
         {

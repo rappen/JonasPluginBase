@@ -178,7 +178,7 @@ namespace JonasPluginBase
 
         #region Private/internal stuff
 
-        private IExecutionContext context;
+        private readonly IExecutionContext context;
 
         private Entity completeEntity;
 

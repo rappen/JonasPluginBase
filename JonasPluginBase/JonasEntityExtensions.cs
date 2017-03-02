@@ -43,7 +43,7 @@ namespace JonasPluginBase
             {
                 return string.Empty;
             }
-            return AttributeToString(entity.LogicalName, attribute, entity[attribute]);
+            return AttributeToString(entity.LogicalName, entity[attribute]);
         }
 
         public static Entity Clone(this Entity entity)
@@ -73,7 +73,7 @@ namespace JonasPluginBase
 
         public static string ExtractAttributes(this Entity entity, Entity preimage)
         {
-            var attrs = "";
+            var attrs = new StringBuilder();
             var keys = entity.Attributes.Keys
                 .Where(k => k != "createdon" &&
                             k != "createdby" &&
@@ -137,7 +137,7 @@ namespace JonasPluginBase
                     }
                 }
                 var newline = $"\n  {attr.PadRight(attlen)} = {resultValue}";
-                attrs += newline;
+                attrs.Append(newline);
                 if (preimage != null && !attr.Equals(entity.LogicalName + "id") && !attr.Equals("activityid") && preimage.Contains(attr))
                 {
                     preValue = AttributeToBaseType(preimage[attr]);
@@ -145,11 +145,10 @@ namespace JonasPluginBase
                     {
                         preValue = "<not changed>";
                     }
-                    var a = new string(' ', attlen);
-                    attrs += $"\n   {("PRE").PadLeft(attlen)}: {ValueToString(preValue, attlen)}";
+                    attrs.Append($"\n   {("PRE").PadLeft(attlen)}: {ValueToString(preValue, attlen)}");
                 }
             }
-            return "  " + attrs.Trim();
+            return "  " + attrs.ToString().Trim();
         }
 
         private static int GetMaxAttributeNameLength(List<string> keys)
@@ -188,14 +187,14 @@ namespace JonasPluginBase
                 return attribute;
         }
 
-        private static string AttributeToString(string entity, string attribute, object value)
+        private static string AttributeToString(string entity, object value)
         {
             if (value is AliasedValue)
-                return AttributeToString(entity, ((AliasedValue)value).AttributeLogicalName, ((AliasedValue)value).Value);
-            //else if (value is EntityReference)
-            //    return ((EntityReference)value).Id;
-            //else if (value is OptionSetValue)
-            //    return ((OptionSetValue)value).Value;
+                return AttributeToString(entity, ((AliasedValue)value).Value);
+            else if (value is EntityReference)
+                return ((EntityReference)value).LogicalName + " " + ((EntityReference)value).Id.ToString();
+            else if (value is OptionSetValue)
+                return ((OptionSetValue)value).Value.ToString();
             else if (value is DateTime)
                 return ((DateTime)value).ToString("G");
             else if (value is Money)
