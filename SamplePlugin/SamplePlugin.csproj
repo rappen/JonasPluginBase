@@ -39,8 +39,8 @@
     <Reference Include="ILMerge">
       <HintPath>..\packages\ILMerge.2.14.1208\tools\ILMerge.exe</HintPath>
     </Reference>
-    <Reference Include="JonasPluginBase, Version=8.2017.2.3, Culture=neutral, PublicKeyToken=f624c2933a8404b7, processorArchitecture=MSIL">
-      <HintPath>packages\Rappen.Xrm.JonasPluginBase.8.2017.2.3\lib\net452\JonasPluginBase.dll</HintPath>
+    <Reference Include="JonasPluginBase, Version=8.2017.3.4, Culture=neutral, PublicKeyToken=f624c2933a8404b7, processorArchitecture=MSIL">
+      <HintPath>packages\Rappen.Xrm.JonasPluginBase.8.2017.3.4\lib\net452\JonasPluginBase.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Crm.Sdk.Proxy, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
