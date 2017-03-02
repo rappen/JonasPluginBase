@@ -10,6 +10,7 @@ namespace JonasPluginBase
     public class JonasTracingService : ITracingService, IDisposable
     {
         private readonly ITracingService trace;
+        private List<string> blockstack = new List<string>();
 
         public JonasTracingService(ITracingService Trace)
         {
@@ -19,6 +20,14 @@ namespace JonasPluginBase
 
         public void Dispose()
         {
+            if (blockstack.Count > 0)
+            {
+                trace.Trace("[JonasTracingService] Ending unended blocks - check code consistency!");
+                while (blockstack.Count > 0)
+                {
+                    BlockEnd();
+                }
+            }
             Trace("*** Exit");
         }
 
@@ -26,9 +35,28 @@ namespace JonasPluginBase
         {
             if (trace != null)
             {
+                var indent = new string(' ', blockstack.Count * 2);
                 var s = string.Format(format, args);
-                trace.Trace(DateTime.Now.ToString("HH:mm:ss.fff") + "\t" + s);
+                trace.Trace(DateTime.Now.ToString("HH:mm:ss.fff") + "\t" + indent + s);
             }
+        }
+
+        internal void BlockBegin(string label)
+        {
+            Trace("BEGIN {0}", label);
+            blockstack.Add(label);
+        }
+
+        internal void BlockEnd()
+        {
+            var label = "?";
+            var pos = blockstack.Count - 1;
+            if (pos >= 0)
+            {
+                label = blockstack[pos];
+                blockstack.RemoveAt(pos);
+            }
+            Trace("END {0}", label);
         }
     }
 }

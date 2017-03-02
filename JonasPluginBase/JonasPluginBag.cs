@@ -2,11 +2,10 @@
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Activities;
 using Microsoft.Xrm.Sdk.Workflow;
+using System.Diagnostics;
 
 namespace JonasPluginBase
 {
@@ -140,6 +139,35 @@ namespace JonasPluginBase
         }
 
         /// <summary>
+        /// Call this function to start a block in the log.
+        /// Log lines will be indented, until next call to TraceBlockEnd.
+        /// Block label with be the name of the calling method.
+        /// </summary>
+        public void TraceBlockStart()
+        {
+            var label = new StackTrace().GetFrame(1).GetMethod().Name;
+            TraceBlockStart(label);
+        }
+
+        /// <summary>
+        /// Call this function to start a block in the log.
+        /// Log lines will be indented, until next call to TraceBlockEnd.
+        /// </summary>
+        /// <param name="label">Label to set for the block</param>
+        public void TraceBlockStart(string label)
+        {
+            TracingService.BlockBegin(label);
+        }
+
+        /// <summary>
+        /// Call this to en a block in the log.
+        /// </summary>
+        public void TraceBlockEnd()
+        {
+            TracingService.BlockEnd();
+        }
+
+        /// <summary>
         /// Get label for specified optionset attribute and value
         /// </summary>
         /// <param name="entity">Entity where the attribute is used</param>
@@ -246,7 +274,7 @@ namespace JonasPluginBase
 
         internal void trace(string format, params object[] args)
         {
-            Trace("JPB: " + format, args);
+            Trace("[JPB] " + format, args);
         }
 
         #endregion Private/Internal stuff
