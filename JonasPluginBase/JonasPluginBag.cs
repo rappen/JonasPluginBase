@@ -148,7 +148,7 @@ namespace JonasPluginBase
         /// <returns></returns>
         public string GetOptionsetLabel(string entity, string attribute, int value)
         {
-            Trace($"Getting metadata for {entity}.{attribute}");
+            trace($"Getting metadata for {entity}.{attribute}");
             var req = new RetrieveAttributeRequest
             {
                 EntityLogicalName = entity,
@@ -162,7 +162,7 @@ namespace JonasPluginBase
                 throw new InvalidPluginExecutionException($"{entity}.{attribute} does not appear to be an optionset");
             }
             var result = plmeta.OptionSet.Options.FirstOrDefault(o => o.Value == value)?.Label?.UserLocalizedLabel?.Label;
-            Trace($"Returning label for value {value}: {result}");
+            trace($"Returning label for value {value}: {result}");
             return result;
         }
 
@@ -189,7 +189,7 @@ namespace JonasPluginBase
             if (entity != null)
             {
                 var attrs = entity.ExtractAttributes(PreImage);
-                Trace("Incoming {0}\n{1}\n", entity.LogicalName, attrs);
+                trace("Incoming {0}\n{1}\n", entity.LogicalName, attrs);
             }
         }
 
@@ -199,7 +199,7 @@ namespace JonasPluginBase
                 return;
             var step = context.OwningExtension != null ? !string.IsNullOrEmpty(context.OwningExtension.Name) ? context.OwningExtension.Name : context.OwningExtension.Id.ToString() : "null";
             var stage = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).Stage : 0;
-            Trace($@"Context details:
+            trace($@"Context details:
   Step:  {step}
   Msg:   {context.MessageName}
   Stage: {stage}
@@ -229,12 +229,12 @@ namespace JonasPluginBase
                 EntityFilters = EntityFilters.Entity,
                 RetrieveAsIfPublished = true
             });
-            Trace("Metadata retrieved for {0}", entityName);
+            trace("Metadata retrieved for {0}", entityName);
             if (metabase != null)
             {
                 EntityMetadata meta = metabase.EntityMetadata;
                 var result = meta.PrimaryNameAttribute;
-                Trace("Primary attribute is: {0}", result);
+                trace("Primary attribute is: {0}", result);
                 return result;
             }
             else
@@ -242,6 +242,11 @@ namespace JonasPluginBase
                 throw new InvalidPluginExecutionException(
                     "Unable to retrieve metadata/primaryattribute for entity: " + entityName);
             }
+        }
+
+        internal void trace(string format, params object[] args)
+        {
+            Trace("JPB: " + format, args);
         }
 
         #endregion Private/Internal stuff
