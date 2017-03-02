@@ -2,6 +2,7 @@
 using System.Activities;
 using Microsoft.Xrm.Sdk.Workflow;
 using Microsoft.Xrm.Sdk;
+using System.Linq;
 
 namespace SamplePlugin.CustomWorkflowActivity
 {
@@ -13,6 +14,8 @@ namespace SamplePlugin.CustomWorkflowActivity
             bag.Trace("SomeString: {0}", s);
             var n = GetCodeActivityParameter(SomeNumber);
             bag.Trace("SomeNumber: {0}", n);
+
+            bag.Trace("CompleteEntity:\n{0}", bag.CompleteEntity.ExtractAttributes(null));
 
             SetCodeActivityParameter(ResultingUser, new EntityReference("systemuser", bag.WorkflowContext.UserId));
         }
