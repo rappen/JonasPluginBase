@@ -16,7 +16,7 @@ namespace JonasPluginBase
         /// Set this property to True to enable extensive tracing of details regarding queries, entities etc.
         /// Note! This may affect performance!
         /// </summary>
-        public bool Detailed { get; set; } = false;
+        public bool Verbose { get; set; } = false;
 
         public JonasTracingService(ITracingService Trace)
         {

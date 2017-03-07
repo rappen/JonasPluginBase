@@ -239,7 +239,7 @@ namespace JonasPluginBase
   User:  {context.UserId}
   IUser: {context.InitiatingUserId}
 ");
-            if (TracingService.Detailed)
+            if (TracingService.Verbose)
             {
                 var parentcontext = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).ParentContext : null;
                 if (parentcontext != null)

@@ -21,7 +21,7 @@ namespace JonasPluginBase
         public void Associate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities)
         {
             bag.trace($"Associate({entityName}, {entityId}, {relationship.SchemaName}, {relatedEntities.Count})");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 bag.trace("Associated record(s):{0}", relatedEntities.Select(r => $"\n  {r.LogicalName} {r.Id} {r.Name}"));
             }
@@ -34,7 +34,7 @@ namespace JonasPluginBase
         public Guid Create(Entity entity)
         {
             bag.trace($"Create({entity.LogicalName}) {entity.Id} ({entity.Attributes.Count} attributes)");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 bag.trace("\n{0}", entity.ExtractAttributes(null));
             }
@@ -57,7 +57,7 @@ namespace JonasPluginBase
         public void Disassociate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities)
         {
             bag.trace($"Disassociate({entityName}, {entityId}, {relationship.SchemaName}, {relatedEntities.Count})");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 bag.trace("Disassociated record(s):{0}", relatedEntities.Select(r => $"\n  {r.LogicalName} {r.Id} {r.Name}"));
             }
@@ -70,7 +70,7 @@ namespace JonasPluginBase
         public OrganizationResponse Execute(OrganizationRequest request)
         {
             bag.trace($"Execute({request.RequestName})");
-            if (bag.TracingService.Detailed && request is ExecuteFetchRequest)
+            if (bag.TracingService.Verbose && request is ExecuteFetchRequest)
             {
                 bag.trace("FetchXML: {0}", ((ExecuteFetchRequest)request).FetchXml);
             }
@@ -84,7 +84,7 @@ namespace JonasPluginBase
         public Entity Retrieve(string entityName, Guid id, ColumnSet columnSet)
         {
             bag.trace($"Retrieve({entityName}, {id}, {columnSet.Columns.Count})");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 bag.trace("Columns:{0}", columnSet.Columns.Select(c => "\n  " + c));
             }
@@ -92,7 +92,7 @@ namespace JonasPluginBase
             var result = service.Retrieve(entityName, id, columnSet);
             watch.Stop();
             bag.trace($"Retrieved in: {watch.ElapsedMilliseconds} ms");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 bag.trace("Retrieved\n{0}", result.ExtractAttributes(null));
             }
@@ -102,7 +102,7 @@ namespace JonasPluginBase
         public EntityCollection RetrieveMultiple(QueryBase query)
         {
             bag.trace("RetrieveMultiple({0})", query is QueryExpression ? ((QueryExpression)query).EntityName : query is QueryByAttribute ? ((QueryByAttribute)query).EntityName : query is FetchExpression ? "fetchxml" : "unkstartn");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 var fetch = ((QueryExpressionToFetchXmlResponse)bag.Service.Execute(new QueryExpressionToFetchXmlRequest() { Query = query })).FetchXml;
                 bag.trace("Query: {0}", fetch);
@@ -117,7 +117,7 @@ namespace JonasPluginBase
         public void Update(Entity entity)
         {
             bag.trace($"Update({entity.LogicalName}) {entity.Id} ({entity.Attributes.Count} attributes)");
-            if (bag.TracingService.Detailed)
+            if (bag.TracingService.Verbose)
             {
                 bag.trace("\n{0}", entity.ExtractAttributes(null));
             }
