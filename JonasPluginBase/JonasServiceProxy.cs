@@ -12,12 +12,6 @@ namespace JonasPluginBase
         private readonly IOrganizationService service;
         private readonly JonasPluginBag bag;
 
-        /// <summary>
-        /// Set this property to True to enable extensive tracing of details regarding queries, entities etc.
-        /// Note! This may affect performance!
-        /// </summary>
-        public bool TraceDetails { get; set; } = false;
-
         public JonasServiceProxy(IOrganizationService Service, JonasPluginBag bag)
         {
             service = Service;
@@ -27,7 +21,7 @@ namespace JonasPluginBase
         public void Associate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities)
         {
             bag.trace($"Associate({entityName}, {entityId}, {relationship.SchemaName}, {relatedEntities.Count})");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 bag.trace("Associated record(s):{0}", relatedEntities.Select(r => $"\n  {r.LogicalName} {r.Id} {r.Name}"));
             }
@@ -40,7 +34,7 @@ namespace JonasPluginBase
         public Guid Create(Entity entity)
         {
             bag.trace($"Create({entity.LogicalName}) {entity.Id} ({entity.Attributes.Count} attributes)");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 bag.trace("\n{0}", entity.ExtractAttributes(null));
             }
@@ -63,7 +57,7 @@ namespace JonasPluginBase
         public void Disassociate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities)
         {
             bag.trace($"Disassociate({entityName}, {entityId}, {relationship.SchemaName}, {relatedEntities.Count})");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 bag.trace("Disassociated record(s):{0}", relatedEntities.Select(r => $"\n  {r.LogicalName} {r.Id} {r.Name}"));
             }
@@ -76,7 +70,7 @@ namespace JonasPluginBase
         public OrganizationResponse Execute(OrganizationRequest request)
         {
             bag.trace($"Execute({request.RequestName})");
-            if (TraceDetails && request is ExecuteFetchRequest)
+            if (bag.TracingService.Detailed && request is ExecuteFetchRequest)
             {
                 bag.trace("FetchXML: {0}", ((ExecuteFetchRequest)request).FetchXml);
             }
@@ -90,7 +84,7 @@ namespace JonasPluginBase
         public Entity Retrieve(string entityName, Guid id, ColumnSet columnSet)
         {
             bag.trace($"Retrieve({entityName}, {id}, {columnSet.Columns.Count})");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 bag.trace("Columns:{0}", columnSet.Columns.Select(c => "\n  " + c));
             }
@@ -98,7 +92,7 @@ namespace JonasPluginBase
             var result = service.Retrieve(entityName, id, columnSet);
             watch.Stop();
             bag.trace($"Retrieved in: {watch.ElapsedMilliseconds} ms");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 bag.trace("Retrieved\n{0}", result.ExtractAttributes(null));
             }
@@ -108,7 +102,7 @@ namespace JonasPluginBase
         public EntityCollection RetrieveMultiple(QueryBase query)
         {
             bag.trace("RetrieveMultiple({0})", query is QueryExpression ? ((QueryExpression)query).EntityName : query is QueryByAttribute ? ((QueryByAttribute)query).EntityName : query is FetchExpression ? "fetchxml" : "unkstartn");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 var fetch = ((QueryExpressionToFetchXmlResponse)bag.Service.Execute(new QueryExpressionToFetchXmlRequest() { Query = query })).FetchXml;
                 bag.trace("Query: {0}", fetch);
@@ -123,7 +117,7 @@ namespace JonasPluginBase
         public void Update(Entity entity)
         {
             bag.trace($"Update({entity.LogicalName}) {entity.Id} ({entity.Attributes.Count} attributes)");
-            if (TraceDetails)
+            if (bag.TracingService.Detailed)
             {
                 bag.trace("\n{0}", entity.ExtractAttributes(null));
             }

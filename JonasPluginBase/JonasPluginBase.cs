@@ -22,7 +22,9 @@ namespace JonasPluginBase
                 }
                 catch (Exception e)
                 {
-                    bag.trace("*** Exception ***\n{0}", e);
+                    bag.TraceBlockStart(e.GetType().ToString());
+                    bag.trace(e.ToString());
+                    bag.TraceBlockEnd();
                     throw;
                 }
                 finally

@@ -12,6 +12,12 @@ namespace JonasPluginBase
         private readonly ITracingService trace;
         private List<string> blockstack = new List<string>();
 
+        /// <summary>
+        /// Set this property to True to enable extensive tracing of details regarding queries, entities etc.
+        /// Note! This may affect performance!
+        /// </summary>
+        public bool Detailed { get; set; } = false;
+
         public JonasTracingService(ITracingService Trace)
         {
             trace = Trace;

@@ -95,7 +95,7 @@ namespace JonasPluginBase
             TracingService = new JonasTracingService((ITracingService)serviceProvider.GetService(typeof(ITracingService)));
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-            var service = serviceFactory.CreateOrganizationService(null);
+            var service = serviceFactory.CreateOrganizationService(context.InitiatingUserId);
             Service = new JonasServiceProxy(service, this);
             Init();
         }
@@ -109,7 +109,7 @@ namespace JonasPluginBase
             TracingService = new JonasTracingService(executionContext.GetExtension<ITracingService>());
             context = executionContext.GetExtension<IWorkflowContext>();
             var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
-            var service = serviceFactory.CreateOrganizationService(null);
+            var service = serviceFactory.CreateOrganizationService(context.InitiatingUserId);
             Service = new JonasServiceProxy(service, this);
             Init();
         }
@@ -237,15 +237,15 @@ namespace JonasPluginBase
   Type:  {context.PrimaryEntityName}
   Id:    {context.PrimaryEntityId}
   User:  {context.UserId}
+  IUser: {context.InitiatingUserId}
 ");
-            var parentcontext = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).ParentContext : null;
-            while (parentcontext != null /*&& parentcontext.Stage == 30*/)
-            {   // Skip mainoperation
-                parentcontext = parentcontext.ParentContext;
-            }
-            if (parentcontext != null)
+            if (TracingService.Detailed)
             {
-                LogTheContext(parentcontext);
+                var parentcontext = context is IPluginExecutionContext ? ((IPluginExecutionContext)context).ParentContext : null;
+                if (parentcontext != null)
+                {
+                    LogTheContext(parentcontext);
+                }
             }
         }
 
