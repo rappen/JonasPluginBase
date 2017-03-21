@@ -6,3 +6,4 @@ This library contains the following classes:
 * JonasCodeActivityBase
 * JonasPluginBag
 
+Package is also published on NuGet: https://www.nuget.org/packages/Rappen.Xrm.JonasPluginBase/
