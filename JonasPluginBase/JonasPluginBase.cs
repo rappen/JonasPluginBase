@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace JonasPluginBase
+namespace Jonas
 {
     /// <summary>
     /// JonasPluginBase implements IPlugin to encapsulate a JonasPluginBag containing stuff from the service and context, and to log service requests to the Tracing Service.

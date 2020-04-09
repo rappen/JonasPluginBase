@@ -7,7 +7,7 @@
     <ProjectGuid>{F45D7F7F-D0E4-4550-92FE-301193C97793}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JonasPluginBase</RootNamespace>
+    <RootNamespace>Jonas</RootNamespace>
     <AssemblyName>JonasPluginBase</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

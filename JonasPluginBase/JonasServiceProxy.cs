@@ -5,7 +5,7 @@ using System.Diagnostics;
 using Microsoft.Crm.Sdk.Messages;
 using System.Linq;
 
-namespace JonasPluginBase
+namespace Jonas
 {
     public class JonasServiceProxy : IOrganizationService
     {

@@ -7,7 +7,7 @@ using System.Activities;
 using Microsoft.Xrm.Sdk.Workflow;
 using System.Diagnostics;
 
-namespace JonasPluginBase
+namespace Jonas
 {
     /// <summary>
     /// A bag of useful stuff when developing plugins of different types for Microsoft Dynamics 365

@@ -2,7 +2,7 @@
 using System.Activities;
 using System.Diagnostics;
 
-namespace JonasPluginBase
+namespace Jonas
 {
     public abstract class JonasCodeActivityBase : CodeActivity
     {

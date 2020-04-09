@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JonasPluginBase
+namespace Jonas
 {
     public static class JonasEntityExtensions
     {
