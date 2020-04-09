@@ -21,6 +21,10 @@ namespace Jonas
         public JonasTracingService(ITracingService Trace)
         {
             trace = Trace;
+            if (trace != null)
+            {
+                trace.Trace(DateTime.Now.ToString("yyyy-MM-dd"));
+            }
             this.Trace("*** Enter");
         }
 
