@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Rappen.Xrm.JonasPluginBase</id>
+    <version>$version$</version>
+    <title>JonasPluginBase</title>
+    <authors>Jonas Rapp</authors>
+    <owners>Jonas Rapp</owners>
+    <iconUrl>https://raw.githubusercontent.com/rappen/JonasPluginBase/master/images/J365-150.jpg</iconUrl>
+    <projectUrl>https://github.com/rappen/JonasPluginBase</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Base class for Microsoft Dynamics 365/CRM plugins</description>
+    <summary>Easier access to context contents and seamless tracing.</summary>
+    <releaseNotes>    
+    </releaseNotes>
+    <copyright>Copyright 2017 Jonas Rapp</copyright>
+    <tags>MSDyn365 Plugin</tags>
+    <dependencies>
+      <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="8.2.0.2"/>
+      <dependency id="Microsoft.CrmSdk.Workflow" version="8.2.0.2"/>
+    </dependencies>
+  </metadata>
+</package>
