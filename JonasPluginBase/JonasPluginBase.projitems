@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>7736b0ee-a6a2-452e-93eb-9968697a4d0a</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>JonasPluginBase</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)JonasCodeActivityBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JonasEntityExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JonasPluginBag.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JonasPluginBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JonasServiceProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JonasTracingService.cs" />
+  </ItemGroup>
+</Project>

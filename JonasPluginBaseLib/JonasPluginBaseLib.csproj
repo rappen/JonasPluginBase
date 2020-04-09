@@ -73,12 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JonasCodeActivityBase.cs" />
-    <Compile Include="JonasEntityExtensions.cs" />
-    <Compile Include="JonasPluginBag.cs" />
-    <Compile Include="JonasPluginBase.cs" />
-    <Compile Include="JonasServiceProxy.cs" />
-    <Compile Include="JonasTracingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +80,7 @@
     <None Include="JonasPluginBase.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="..\JonasPluginBase\JonasPluginBase.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
