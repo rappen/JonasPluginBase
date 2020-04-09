@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Rappen.Canary365.Plugin;
 using System;
 using System.Diagnostics;
 
@@ -18,6 +19,7 @@ namespace Jonas
                 var watch = Stopwatch.StartNew();
                 try
                 {
+                    bag.TracingService.TraceContext(bag.PluginContext, false, true, true, bag.Service);
                     Execute(bag);
                 }
                 catch (Exception e)

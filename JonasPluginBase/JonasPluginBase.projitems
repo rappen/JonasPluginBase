@@ -9,6 +9,7 @@
     <Import_RootNamespace>JonasPluginBase</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CanaryTracer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JonasCodeActivityBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JonasEntityExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JonasPluginBag.cs" />

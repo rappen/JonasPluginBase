@@ -6,6 +6,7 @@ using System.Linq;
 using System.Activities;
 using Microsoft.Xrm.Sdk.Workflow;
 using System.Diagnostics;
+using Rappen.Canary365.Plugin;
 
 namespace Jonas
 {
@@ -97,7 +98,6 @@ namespace Jonas
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(context.InitiatingUserId);
             Service = new JonasServiceProxy(service, this);
-            Init();
         }
 
         /// <summary>
