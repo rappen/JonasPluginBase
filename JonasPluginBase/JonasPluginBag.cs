@@ -139,6 +139,15 @@ namespace Jonas
         }
 
         /// <summary>
+        /// Traces the text straight to the tracing service, without timestamps, indentation etc.
+        /// </summary>
+        /// <param name="text"></param>
+        public void TraceRaw(string text)
+        {
+            TracingService.TraceRaw(text);
+        }
+
+        /// <summary>
         /// Call this function to start a block in the log.
         /// Log lines will be indented, until next call to TraceBlockEnd.
         /// Block label with be the name of the calling method.

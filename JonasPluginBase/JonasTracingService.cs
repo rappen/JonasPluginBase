@@ -46,9 +46,25 @@ namespace Jonas
             if (trace != null)
             {
                 var indent = new string(' ', blockstack.Count * 2);
-                var s = string.Format(format, args);
+                var s = format;
+                if (args.Length > 0)
+                {
+                    try
+                    {
+                        s = string.Format(format, args);
+                    }
+                    catch (FormatException)
+                    {
+                        s += "\r\nTrace Parameters:\r\n  " + string.Join("  \r\n", args);
+                    }
+                }
                 trace.Trace(DateTime.Now.ToString("HH:mm:ss.fff") + "\t" + indent + s);
             }
+        }
+
+        public void TraceRaw(string text)
+        {
+            trace.Trace(text);
         }
 
         internal void BlockBegin(string label)
