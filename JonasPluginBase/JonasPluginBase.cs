@@ -24,9 +24,7 @@ namespace Jonas
                 }
                 catch (Exception e)
                 {
-                    bag.TraceBlockStart(e.GetType().ToString());
                     bag.trace(e.ToString());
-                    bag.TraceBlockEnd();
                     throw;
                 }
                 finally
