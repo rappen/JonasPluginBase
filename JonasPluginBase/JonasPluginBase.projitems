@@ -16,5 +16,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)JonasPluginBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JonasServiceProxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JonasTracingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryExtensions.cs" />
   </ItemGroup>
 </Project>
