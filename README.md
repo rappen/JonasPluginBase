@@ -14,3 +14,7 @@ This library contains base classes `JonasPluginBase` and `JonasCodeActivityBase`
 My version of "LocalContext" is called `JonasPluginBag` and includes proxies for `IOrganizationService`, `ITracingService` etc, providing timings of calls, indentation helpers etc.
 
 The project also contains some handy extension methods for `Microsoft.Xrm.Sdk.Entity` and `Microsoft.Xrm.Sdk.Query.QueryExpression`.
+
+## More info
+
+I wrote a blog post about this a while back: [I get by with a little help from my [base class]](https://jonasr.app/2017/03/a-little-help/)
