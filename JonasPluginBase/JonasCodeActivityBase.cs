@@ -6,11 +6,9 @@ namespace Jonas
 {
     public abstract class JonasCodeActivityBase : CodeActivity
     {
-        private CodeActivityContext codeActivityContext;
-
         protected override void Execute(CodeActivityContext context)
         {
-            codeActivityContext = context;
+            CodeActivityContext codeActivityContext = context;
 
             using (var bag = new JonasPluginBag(context))
             {
