@@ -8,8 +8,6 @@ namespace Jonas
     {
         protected override void Execute(CodeActivityContext context)
         {
-            CodeActivityContext codeActivityContext = context;
-
             using (var bag = new JonasPluginBag(context))
             {
                 var watch = Stopwatch.StartNew();
@@ -31,7 +29,10 @@ namespace Jonas
         }
 
         public abstract void Execute(JonasPluginBag bag);
-
+    }
+    public partial class JonasPluginBag
+    {
+        CodeActivityContext codeActivityContext { get; set; }
         public T GetCodeActivityParameter<T>(InArgument<T> parameter)
         {
             T result = parameter.Get(codeActivityContext);

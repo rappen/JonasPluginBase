@@ -111,6 +111,7 @@ namespace Jonas
             var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
             var service = serviceFactory.CreateOrganizationService(context.InitiatingUserId);
             Service = new JonasServiceProxy(service, this);
+            codeActivityContext = executionContext;
             Init();
         }
 
