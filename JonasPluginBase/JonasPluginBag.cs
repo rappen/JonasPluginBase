@@ -13,7 +13,7 @@ namespace Jonas
     /// <summary>
     /// A bag of useful stuff when developing plugins of different types for Microsoft Dynamics 365
     /// </summary>
-    public class JonasPluginBag : IDisposable
+    public partial class JonasPluginBag : IDisposable
     {
         #region Public properties
 
