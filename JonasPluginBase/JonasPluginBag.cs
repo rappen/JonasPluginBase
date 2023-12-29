@@ -21,10 +21,13 @@ namespace Jonas
 
         public JonasTracingService TracingService { get; }
 
+        public JonasEndpointNotificationService EndpointNotificationService { get; }
+
         public IPluginExecutionContext PluginContext { get { return context as IPluginExecutionContext; } }
 
         public IWorkflowContext WorkflowContext { get { return context as IWorkflowContext; } }
-
+        
+      
         public Entity TargetEntity
         {
             get
@@ -97,7 +100,9 @@ namespace Jonas
             context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = serviceFactory.CreateOrganizationService(context.InitiatingUserId);
+            var endpointService = (IServiceEndpointNotificationService)serviceProvider.GetService(typeof(IServiceEndpointNotificationService));
             Service = new JonasServiceProxy(service, this);
+            EndpointNotificationService = new JonasEndpointNotificationService(endpointService, this);
         }
 
         /// <summary>
@@ -111,6 +116,7 @@ namespace Jonas
             var serviceFactory = executionContext.GetExtension<IOrganizationServiceFactory>();
             var service = serviceFactory.CreateOrganizationService(context.InitiatingUserId);
             Service = new JonasServiceProxy(service, this);
+            EndpointNotificationService = new JonasEndpointNotificationService(executionContext.GetExtension<IServiceEndpointNotificationService>(), this);
             codeActivityContext = executionContext;
             Init();
         }
