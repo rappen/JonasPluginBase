@@ -1,23 +1,20 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>Rappen.Xrm.JonasPluginBase</id>
-    <version>$version$</version>
-    <title>JonasPluginBase</title>
-    <authors>Jonas Rapp</authors>
-    <owners>Jonas Rapp</owners>
-    <iconUrl>https://raw.githubusercontent.com/rappen/JonasPluginBase/master/images/J365-150.jpg</iconUrl>
-    <projectUrl>https://github.com/rappen/JonasPluginBase</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Base class for Microsoft Dynamics 365/CRM plugins</description>
-    <summary>Easier access to context contents and seamless tracing.</summary>
-    <releaseNotes>    
-    </releaseNotes>
-    <copyright>Copyright 2017 Jonas Rapp</copyright>
-    <tags>MSDyn365 Plugin</tags>
-    <dependencies>
-      <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="8.2.0.2"/>
-      <dependency id="Microsoft.CrmSdk.Workflow" version="8.2.0.2"/>
-    </dependencies>
-  </metadata>
+<package>
+	<metadata>
+		<id>Rappen.Xrm.JonasPluginBase</id>
+		<version>$version$</version>
+		<title>JonasPluginBase</title>
+		<authors>Jonas Rapp</authors>
+		<owners>Jonas Rapp</owners>
+		<license type="expression">MIT</license>
+		<iconUrl>https://raw.githubusercontent.com/rappen/JonasPluginBase/master/images/J365-150.jpg</iconUrl>
+		<projectUrl>https://jonasr.app/a-little-help/</projectUrl>
+		<!--<requireLicenseAcceptance>false</requireLicenseAcceptance>-->
+		<repository type="C#" url="https://github.com/rappen/JonasPluginBase" />
+		<description>Base class for Microsoft Dataverse / Dynamics 365/CRM plugins</description>
+		<summary>Easier access to context contents and seamless tracing.</summary>
+		<releaseNotes>Added JonasEndpointNotificationService by @Paca</releaseNotes>
+		<copyright>Copyright 2017-2024 Jonas Rapp</copyright>
+		<tags>PowerPlatform, Dataverse, MSDyn365 Plugin</tags>
+	</metadata>
 </package>
